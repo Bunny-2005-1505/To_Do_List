@@ -1,76 +1,125 @@
-# supports-color [![Build Status](https://travis-ci.org/chalk/supports-color.svg?branch=master)](https://travis-ci.org/chalk/supports-color)
+# locate-path [![Build Status](https://travis-ci.com/sindresorhus/locate-path.svg?branch=master)](https://travis-ci.com/github/sindresorhus/locate-path)
 
-> Detect whether a terminal supports color
-
+> Get the first path that exists on disk of multiple paths
 
 ## Install
 
 ```
-$ npm install supports-color
+$ npm install locate-path
 ```
-
 
 ## Usage
 
+Here we find the first file that exists on disk, in array order.
+
 ```js
-const supportsColor = require('supports-color');
+const locatePath = require('locate-path');
 
-if (supportsColor.stdout) {
-	console.log('Terminal stdout supports color');
-}
+const files = [
+	'unicorn.png',
+	'rainbow.png', // Only this one actually exists on disk
+	'pony.png'
+];
 
-if (supportsColor.stdout.has256) {
-	console.log('Terminal stdout supports 256 colors');
-}
-
-if (supportsColor.stderr.has16m) {
-	console.log('Terminal stderr supports 16 million colors (truecolor)');
-}
+(async () => {
+	console(await locatePath(files));
+	//=> 'rainbow'
+})();
 ```
-
 
 ## API
 
-Returns an `Object` with a `stdout` and `stderr` property for testing either streams. Each property is an `Object`, or `false` if color is not supported.
+### locatePath(paths, options?)
 
-The `stdout`/`stderr` objects specifies a level of support for color through a `.level` property and a corresponding flag:
+Returns a `Promise<string>` for the first path that exists or `undefined` if none exists.
 
-- `.level = 1` and `.hasBasic = true`: Basic color support (16 colors)
-- `.level = 2` and `.has256 = true`: 256 color support
-- `.level = 3` and `.has16m = true`: Truecolor support (16 million colors)
+#### paths
 
+Type: `Iterable<string>`
 
-## Info
+Paths to check.
 
-It obeys the `--color` and `--no-color` CLI flags.
+#### options
 
-For situations where using `--color` is not possible, use the environment variable `FORCE_COLOR=1` (level 1), `FORCE_COLOR=2` (level 2), or `FORCE_COLOR=3` (level 3) to forcefully enable color, or `FORCE_COLOR=0` to forcefully disable. The use of `FORCE_COLOR` overrides all other color support checks.
+Type: `object`
 
-Explicit 256/Truecolor mode can be enabled using the `--color=256` and `--color=16m` flags, respectively.
+##### concurrency
 
+Type: `number`\
+Default: `Infinity`\
+Minimum: `1`
+
+Number of concurrently pending promises.
+
+##### preserveOrder
+
+Type: `boolean`\
+Default: `true`
+
+Preserve `paths` order when searching.
+
+Disable this to improve performance if you don't care about the order.
+
+##### cwd
+
+Type: `string`\
+Default: `process.cwd()`
+
+Current working directory.
+
+##### type
+
+Type: `string`\
+Default: `'file'`\
+Values: `'file' | 'directory'`
+
+The type of paths that can match.
+
+##### allowSymlinks
+
+Type: `boolean`\
+Default: `true`
+
+Allow symbolic links to match if they point to the chosen path type.
+
+### locatePath.sync(paths, options?)
+
+Returns the first path that exists or `undefined` if none exists.
+
+#### paths
+
+Type: `Iterable<string>`
+
+Paths to check.
+
+#### options
+
+Type: `object`
+
+##### cwd
+
+Same as above.
+
+##### type
+
+Same as above.
+
+##### allowSymlinks
+
+Same as above.
 
 ## Related
 
-- [supports-color-cli](https://github.com/chalk/supports-color-cli) - CLI for this module
-- [chalk](https://github.com/chalk/chalk) - Terminal string styling done right
-
-
-## Maintainers
-
-- [Sindre Sorhus](https://github.com/sindresorhus)
-- [Josh Junon](https://github.com/qix-)
-
+- [path-exists](https://github.com/sindresorhus/path-exists) - Check if a path exists
 
 ---
 
 <div align="center">
 	<b>
-		<a href="https://tidelift.com/subscription/pkg/npm-supports-color?utm_source=npm-supports-color&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
+		<a href="https://tidelift.com/subscription/pkg/npm-locate-path?utm_source=npm-locate-path&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
 	</b>
 	<br>
 	<sub>
 		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
 	</sub>
 </div>
-
----
